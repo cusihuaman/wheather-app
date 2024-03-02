@@ -1,15 +1,47 @@
 
 
 const apiKey = "a3a8896651a4f0d72da938dd4316ab79";
-const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=bangalore";
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=germany";
+const searchBox = document.querySelector('.search input');
+const searchBtn = document.querySelector('.search button');
 
-async function checkWheather() {
-    const response = await fetch(apiUrl + `&appid=${apiKey}`);
-    var data = await response.json()
-    console.log(data)
-    document.querySelector('.city').innerHTML = data.name;
-    document.querySelector('.temp').innerHTML = Math.round(data.main.temp) + '°C';
-    document.querySelector('.numidity').innerHTML = data.main.humidity+ '%';
-    document.querySelector('.wind').innerHTML = data.wind.speed+'km/h';
+const weatherIcon = document.querySelector('.weather-icon');
+
+async function checkWheather(city) {
+    const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+    if(response.status==404){
+        document.querySelector('.error').styles.diplay="block";
+        document.querySelector('.weather').styles.diplay = 'none';
+    }
+    else{
+        var data = await response.json();
+        console.log(data)
+        document.querySelector('.city').innerHTML = data.name;
+        document.querySelector('.temp').innerHTML = Math.round(data.main.temp) + '°C';
+        document.querySelector('.humidity').innerHTML = data.main.humidity+ '%';
+        document.querySelector('.wind').innerHTML = data.wind.speed+'km/h';
+    
+        if(data.weather[0].main=='Clouds'){
+            weatherIcon.src = "img/clouds.png"
+        }
+        else if (data.weather[0].main == 'Clear'){
+            weatherIcon.src = "img/clear.png"
+        }
+        else if (data.weather[0].main == 'Rain'){
+            weatherIcon.src = "img/rain.png"
+        }
+        else if (data.weather[0].main == 'Drizzle'){
+            weatherIcon.src = "img/drizzle.png"
+        }
+        else if (data.weather[0].main == 'Mist'){
+            weatherIcon.src = "img/mist.png"
+        }
+        document.querySelector(".weather").style.diplay='block';
+        document.querySelector(".error").style.diplay = "none";
+    }
 }
+
+searchBtn.addEventListener('click',()=>{
+    checkWheather(searchBox.value);
+})
 checkWheather();
